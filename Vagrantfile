@@ -38,7 +38,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: "sudo apt install -y firefox"
 
   # Add Japanese support
-  config.vm.provision :shell, inline: "sudo apt install -y fcitx-mozc"
+  #config.vm.provision :shell, inline: "sudo apt install -y fcitx-mozc"
   config.vm.provision :shell, inline: "sudo apt install -y fonts-noto"
 
   # Restart
