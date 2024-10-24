@@ -1,16 +1,14 @@
 # Copyright 2019 Yoshimasa Niwa
 # SPDX-License-Identifier: MIT
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/bionic64"
+  config.vm.box = "bento/ubuntu-24.04"
 
   config.vm.provider :virtualbox do |v|
     v.gui = true
     v.memory = 2048
   end
 
-  # Currently "ubuntu/bionic64" on VirtualBox requires `type: "virtualbox"`
-  # to make synced folder works.
-  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+  config.vm.synced_folder ".", "/vagrant"
 
   # Add Google Chrome repository
   config.vm.provision :shell, inline: "wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub|sudo apt-key add -"
@@ -23,8 +21,11 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: "sudo apt upgrade -y"
 
   # Add desktop environment
-  config.vm.provision :shell, inline: "sudo apt install -y --no-install-recommends ubuntu-desktop"
-  config.vm.provision :shell, inline: "sudo apt install -y --no-install-recommends virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11"
+  config.vm.provision :shell, inline: "sudo apt install -y ubuntu-desktop-minimal"
+
+  # Enable VirtualBox guest additions support
+  config.vm.provision :shell, inline: "sudo apt install -y --no-install-recommends virtualbox-guest-x11"
+
   # Add `vagrant` to Administrator
   config.vm.provision :shell, inline: "sudo usermod -a -G sudo vagrant"
 
@@ -35,7 +36,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: "sudo apt install -y chromium-browser"
 
   # Add Firefox
-  config.vm.provision :shell, inline: "sudo apt install -y firefox"
+  config.vm.provision :shell, inline: "sudo snap install firefox"
 
   # Add Japanese support
   #config.vm.provision :shell, inline: "sudo apt install -y fcitx-mozc"
