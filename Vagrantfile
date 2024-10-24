@@ -32,9 +32,6 @@ Vagrant.configure("2") do |config|
   # Add Google Chrome
   config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y google-chrome-stable"
 
-  # Add Chromium
-  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y chromium-browser"
-
   # Add Firefox
   config.vm.provision :shell, inline: "sudo snap install firefox"
 
