@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y"
 
   # Add desktop environment
-  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ubuntu-desktop-minimal"
+  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ubuntu-desktop-minimal network-manager"
 
   # Enable VirtualBox guest additions support
   config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends virtualbox-guest-utils virtualbox-guest-x11"
