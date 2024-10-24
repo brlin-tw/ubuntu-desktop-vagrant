@@ -39,6 +39,9 @@ Vagrant.configure("2") do |config|
   #config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y fcitx-mozc"
   config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y fonts-noto"
 
+  # WORKAROUND: Avoid unnecessary timeout for a desktop system
+  config.vm.provision :shell, inline: "sudo systemctl disable systemd-networkd-wait-online.service"
+
   # Restart
   config.vm.provision :shell, inline: "sudo shutdown -r now"
 end
