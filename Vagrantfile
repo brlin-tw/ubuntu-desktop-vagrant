@@ -9,6 +9,10 @@ Vagrant.configure("2") do |config|
 
     # Enable 3D acceleration for better performance
     v.customize ["modifyvm", :id, "--accelerate-3d=on"]
+
+    # Customize guest display scaling for HiDPI host displays
+    # https://forums.virtualbox.org/viewtopic.php?p=362196&sid=268bb84dc835643e14b7c7d7398e6e2c#p362196
+    #v.customize ["setextradata", :id, "GUI/ScaleFactor", "1"]
   end
 
   config.vm.synced_folder ".", "/vagrant"
