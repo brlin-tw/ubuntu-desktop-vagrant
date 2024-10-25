@@ -5,6 +5,20 @@ Provision consistent and reproducible Ubuntu desktop environment using Vagrant.
 <https://gitlab.com/brlin/ubuntu-desktop-vagrant>  
 [![The GitLab CI pipeline status badge of the project's `main` branch](https://gitlab.com/brlin/ubuntu-desktop-vagrant/badges/main/pipeline.svg?ignore_skipped=true "Click here to check out the comprehensive status of the GitLab CI pipelines")](https://gitlab.com/brlin/ubuntu-desktop-vagrant/-/pipelines) [![GitHub Actions workflow status badge](https://github.com/brlin-tw/ubuntu-desktop-vagrant/actions/workflows/check-potential-problems.yml/badge.svg "GitHub Actions workflow status")](https://github.com/brlin-tw/ubuntu-desktop-vagrant/actions/workflows/check-potential-problems.yml) [![pre-commit enabled badge](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white "This project uses pre-commit to check potential problems")](https://pre-commit.com/) [![REUSE Specification compliance badge](https://api.reuse.software/badge/gitlab.com/brlin/ubuntu-desktop-vagrant "This project complies to the REUSE specification to decrease software licensing costs")](https://api.reuse.software/info/gitlab.com/brlin/ubuntu-desktop-vagrant)
 
+## Prerequisites
+
+The following prerequisites must be match in order to use this solution:
+
+* The host system must have the following software installed and has its commands available in the command search PATHs:
+    + OPTIONAL - (Your preferred archive extraction application/utility)  
+      For extracting the downloaded product release archive.
+    + OPTIONAL - (Your preferred HTTPS client/Web browser)  
+      For downloading the product release archive.
+    + Vagrant  
+      For provisioning the virtual machine that runs the Ubuntu desktop environment.
+    + Oracle VirtualBox(must be in a version that your Vagrant installation supports, as of 2024/10/25 it is 7.0.\*)
+* The host system must have access to the Internet in order to retrieve the virtual machine image and other guest packages.
+
 ## References
 
 The following material are referenced during the development of this project:
