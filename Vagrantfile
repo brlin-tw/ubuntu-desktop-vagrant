@@ -25,7 +25,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: "sudo apt update -y"
 
   # Upgrade installed packages
-  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y"
+  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y"
 
   # Add desktop environment
   config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ubuntu-desktop-minimal network-manager"
