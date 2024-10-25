@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: "sudo apt install -y chromium-browser"
 
   # Add Firefox
-  config.vm.provision :shell, inline: "sudo apt install -y firefox"
+  config.vm.provision :shell, inline: "sudo snap install firefox"
 
   # Add Japanese support
   #config.vm.provision :shell, inline: "sudo apt install -y fcitx-mozc"
