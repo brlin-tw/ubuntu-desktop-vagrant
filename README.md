@@ -19,6 +19,41 @@ The following prerequisites must be match in order to use this solution:
     + Oracle VirtualBox(must be in a version that your Vagrant installation supports, as of 2024/10/25 it is 7.0.\*)
 * The host system must have access to the Internet in order to retrieve the virtual machine image and other guest packages.
 
+## Usage
+
+Follow the following instructions to use this solution:
+
+1. Download the product release archive from [the Releases page](https://gitlab.com/brlin/ubuntu-desktop-vagrant/-/releases)
+1. Extract the product release archive.
+1. Launch a text terminal.
+1. Change the working directory to the extracted product release directory by running the following command:
+
+    ```bash
+    cd /path/to/ubuntu-desktop-vagrant-X.Y.Z
+    ```
+
+1. Run the following command to provision the Ubuntu desktop virtual machine:
+
+    ```bash
+    vagrant up
+    ```
+
+   A VM console window should popup, allowing you to operate the desktop environment.
+
+   You can also run the following command to gain access to a text shell:
+
+    ```bash
+    vagrant ssh
+    ```
+
+1. OPTIONAL: Run the following command to destroy the virtual machine:
+
+    ```bash
+    vagrant destroy
+    ```
+
+   All data will be lost after the operation.
+
 ## References
 
 The following material are referenced during the development of this project:
