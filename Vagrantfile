@@ -6,6 +6,9 @@ Vagrant.configure("2") do |config|
   config.vm.provider :virtualbox do |v|
     v.gui = true
     v.memory = 2048
+
+    # Enable 3D acceleration for better performance
+    v.customize ["modifyvm", :id, "--accelerate-3d=on"]
   end
 
   config.vm.synced_folder ".", "/vagrant"
