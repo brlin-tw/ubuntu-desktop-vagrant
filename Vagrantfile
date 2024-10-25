@@ -8,9 +8,7 @@ Vagrant.configure("2") do |config|
     v.memory = 2048
   end
 
-  # Currently "ubuntu/bionic64" on VirtualBox requires `type: "virtualbox"`
-  # to make synced folder works.
-  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+  config.vm.synced_folder ".", "/vagrant"
 
   # Add Google Chrome repository
   config.vm.provision :shell, inline: "wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub|sudo apt-key add -"
