@@ -18,29 +18,29 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: "sudo apt update -y"
 
   # Upgrade installed packages
-  config.vm.provision :shell, inline: "sudo apt upgrade -y"
+  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y"
 
   # Add desktop environment
-  config.vm.provision :shell, inline: "sudo apt install -y ubuntu-desktop-minimal"
+  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ubuntu-desktop-minimal"
 
   # Enable VirtualBox guest additions support
-  config.vm.provision :shell, inline: "sudo apt install -y --no-install-recommends virtualbox-guest-utils virtualbox-guest-x11"
+  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends virtualbox-guest-utils virtualbox-guest-x11"
 
   # Add `vagrant` to Administrator
   config.vm.provision :shell, inline: "sudo usermod -a -G sudo vagrant"
 
   # Add Google Chrome
-  config.vm.provision :shell, inline: "sudo apt install -y google-chrome-stable"
+  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y google-chrome-stable"
 
   # Add Chromium
-  config.vm.provision :shell, inline: "sudo apt install -y chromium-browser"
+  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y chromium-browser"
 
   # Add Firefox
   config.vm.provision :shell, inline: "sudo snap install firefox"
 
   # Add Japanese support
-  #config.vm.provision :shell, inline: "sudo apt install -y fcitx-mozc"
-  config.vm.provision :shell, inline: "sudo apt install -y fonts-noto"
+  #config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y fcitx-mozc"
+  config.vm.provision :shell, inline: "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y fonts-noto"
 
   # Restart
   config.vm.provision :shell, inline: "sudo shutdown -r now"
