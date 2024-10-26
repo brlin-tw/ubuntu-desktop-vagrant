@@ -60,6 +60,14 @@ The following material are referenced during the development of this project:
 
 * [A simple Vagrantfile to setup Ubuntu desktop environment with Google Chrome and Japanese input](https://gist.github.com/niw/bed28f823b4ebd2c504285ff99c1b2c2)  
   The inspiration of this project.
+* [Shell Scripts - Provisioning | Vagrant | HashiCorp Developer](https://developer.hashicorp.com/vagrant/docs/provisioning/shell)  
+  Explains how to run external provision shell scripts in a Vagrantfile.
+* [Redirections (Bash Reference Manual)](https://www.gnu.org/software/bash/manual/html_node/Redirections.html#Here-Documents)  
+  Explains how to use the Here Documents feature of the Bash shell scripting language.
+* [Bug #1933248 “please drop virtualbox-guest-dkms virtualbox-guest...” : Bugs : virtualbox package : Ubuntu](https://bugs.launchpad.net/ubuntu/+source/virtualbox/+bug/1933248)  
+  Explains the reason why the virtualbox-guest-dkms package is no longer available in recent Ubuntu releases.
+* [Bug #2076520 “Ubuntu 24.04 LTS VBox VM does not boot anymore [...” : Bugs : linux package : Ubuntu](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2076520)  
+  Bug report regarding the problem where guest support no longer works when upgrading the Ubuntu kernel on a Ubuntu 24.04 system.
 
 ## Licensing
 
