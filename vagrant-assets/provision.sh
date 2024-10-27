@@ -213,10 +213,10 @@ fi
 
 printf \
     'Info: Updating all packages in the system to apply bug and security fixes...\n'
-apt_get_upgrade_opts=(
+apt_get_full_upgrade_opts=(
     -y
 )
-if ! sudo apt-get upgrade "${apt_get_upgrade_opts[@]}"; then
+if ! sudo apt-get full-upgrade "${apt_get_full_upgrade_opts[@]}"; then
     printf \
         'Error: Unable to update all packages in the system to apply bug and security fixes...\n' \
         1>&2
