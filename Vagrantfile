@@ -14,6 +14,9 @@ Vagrant.configure("2") do |config|
     # Customize guest display scaling for HiDPI host displays
     # https://forums.virtualbox.org/viewtopic.php?p=362196&sid=268bb84dc835643e14b7c7d7398e6e2c#p362196
     #v.customize ["setextradata", :id, "GUI/ScaleFactor", "1"]
+
+    # Use Virt-IO network adapter to improve networking performance
+    v.default_nic_type = "virtio"
   end
 
   config.vm.synced_folder ".", "/vagrant"
