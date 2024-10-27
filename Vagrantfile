@@ -17,6 +17,12 @@ Vagrant.configure("2") do |config|
 
     # Use Virt-IO network adapter to improve networking performance
     v.default_nic_type = "virtio"
+
+    # Reduce port count to cut down boot time
+    v.customize ["storagectl", :id, "--name=SATA Controller", "--controller=IntelAhci", "--portcount=2"]
+
+    # Drop the unused IDE disk controller to reduce boot time
+    v.customize ["storagectl", :id, "--name=IDE Controller", "--controller=PIIX4", "--remove"]
   end
 
   config.vm.synced_folder ".", "/vagrant"
