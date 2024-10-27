@@ -32,8 +32,8 @@ required_commands=(
     date
     install
     mktemp
+    reboot
     rm
-    shutdown
     snap
     sudo
     systemctl
@@ -373,7 +373,7 @@ printf \
 
 printf \
     'Info: Triggering system reboot to apply changes...\n'
-if ! sudo shutdown -r now; then
+if ! sudo reboot; then
     printf \
         'Error: Unable to trigger system reboot to apply changes.\n' \
         1>&2
