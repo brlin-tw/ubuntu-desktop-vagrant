@@ -1,4 +1,5 @@
 # Copyright 2019 Yoshimasa Niwa
+# Copyright 2024 林博仁 <buo.ren.lin@gmail.com>
 # SPDX-License-Identifier: MIT
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-24.04"
