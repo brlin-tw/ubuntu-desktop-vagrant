@@ -4,6 +4,8 @@
 # Copyright 2024 林博仁(Buo-ren Lin) <buo.ren.lin@gmail.com>
 # SPDX-License-Identifier: MIT
 
+ENABLE_JAPANESE_INPUT_METHOD_SUPPORT="${ENABLE_JAPANESE_INPUT_METHOD_SUPPORT:-false}"
+
 printf \
     'Info: Configuring the defensive interpreter behaviors...\n'
 set_opts=(
@@ -324,18 +326,20 @@ if ! sudo snap install firefox; then
     exit 2
 fi
 
-printf \
-    'Info: Installing Japanese input method...\n'
-apt_get_install_opts=(
-    -y
-)
-if ! sudo apt-get install \
-    "${apt_get_install_opts[@]}" \
-    fcitx-mozc; then
+if test "${ENABLE_JAPANESE_INPUT_METHOD_SUPPORT}" == true; then
     printf \
-        'Error: Unable to install Japanese input method.\n' \
-        1>&2
-    exit 2
+        'Info: Installing Japanese input method...\n'
+    apt_get_install_opts=(
+        -y
+    )
+    if ! sudo apt-get install \
+        "${apt_get_install_opts[@]}" \
+        fcitx-mozc; then
+        printf \
+            'Error: Unable to install Japanese input method.\n' \
+            1>&2
+        exit 2
+    fi
 fi
 
 printf \
