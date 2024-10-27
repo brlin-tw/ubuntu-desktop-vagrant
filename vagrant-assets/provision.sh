@@ -227,11 +227,49 @@ ubuntu_desktop_pkgs=(
     # Install the minimal variant as the user won't likely need the complete desktop applications
     ubuntu-desktop-minimal
 
-    # For enabling GUI configuration of the network connections
+    # Manually select ubuntu-desktop-minimal recommended packages that are useful
+    apport-gtk
+    appstream
+    apt-config-icons-hidpi
+    avahi-daemon
+    fonts-liberation
+    fonts-noto-cjk
+    fonts-ubuntu
+    gnome-online-accounts
+    gnome-terminal
+    gnome-text-editor
+    gsettings-ubuntu-schemas
+    ibus
+    ibus-gtk
+    ibus-gtk3
+    ibus-table
+    im-config
+    kerneloops
+    libglib2.0-bin
+    libnss-mdns
     network-manager
+    packagekit
+    plymouth-theme-spinner
+    policykit-desktop-privileges
+    seahorse
+    snapd
+    systemd-oomd
+    ubuntu-docs
+    ubuntu-wallpapers
+    whoopsie
+    xcursor-themes
+    xdg-desktop-portal-gnome
+    xdg-utils
+    yaru-theme-gnome-shell
+    yaru-theme-gtk
+    yaru-theme-icon
+    yaru-theme-sound
 )
 apt_get_install_opts=(
     -y
+
+    # There're some recommended packages that are not useful in a VM, we avoid installing them while manually select packages that is indeed useful in general
+    --no-install-recommends
 )
 if ! sudo apt-get install \
     "${apt_get_install_opts[@]}" \
