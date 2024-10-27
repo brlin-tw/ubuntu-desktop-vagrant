@@ -202,7 +202,7 @@ fi
 
 printf \
     'Info: Updating the APT software source local cache...\n'
-if ! sudo apt update; then
+if ! sudo apt-get update; then
     printf \
         'Error: Unable to update the APT software source local cache.\n' \
         1>&2
