@@ -23,6 +23,11 @@ Vagrant.configure("2") do |config|
 
     # Drop the unused IDE disk controller to reduce boot time
     v.customize ["storagectl", :id, "--name=IDE Controller", "--controller=PIIX4", "--remove"]
+
+    # Create a virtual DVD drive and mount guest additions ISO into it
+    # WORKAROUND: In 7.0.3 "--medium=additions" only work if we first set the medium to an empty
+    v.customize ["storageattach", :id, "--storagectl=SATA Controller", "--port=1", "--type=dvddrive", "--medium=emptydrive"]
+    v.customize ["storageattach", :id, "--storagectl=SATA Controller", "--port=1", "--type=dvddrive", "--medium=additions"]
   end
 
   config.vm.synced_folder ".", "/vagrant"

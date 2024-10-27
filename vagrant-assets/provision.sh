@@ -32,6 +32,7 @@ required_commands=(
     date
     install
     mktemp
+    mount
     reboot
     rm
     sed
@@ -214,6 +215,62 @@ if ! sudo apt-get update; then
 fi
 
 printf \
+    'Info: Installing build dependencies of the VirtualBox guest additions...\n'
+if ! current_running_kernel_version="$(uname -r)"; then
+    printf \
+        'Error: Unable to detect the current running Ubuntu kernel version.\n' \
+        1>&2
+    exit 2
+fi
+vboxga_build_dependencies_pkgs=(
+    dkms
+    gcc
+    make
+    linux-headers-generic
+    "linux-headers-${current_running_kernel_version}"
+)
+apt_get_install_opts=(
+    -y
+    --no-install-recommends
+)
+if ! sudo apt-get install \
+    "${apt_get_install_opts[@]}" \
+    "${vboxga_build_dependencies_pkgs[@]}"; then
+    printf \
+        'Error: Unable to install VirtualBox support packages.\n' \
+        1>&2
+    exit 2
+fi
+
+if ! test -e /mnt/VBoxLinuxAdditions.run; then
+    printf \
+        'Info: Mounting the VirtualBox guest additions disk image...\n'
+    if ! sudo mount -o ro /dev/sr0 /mnt; then
+        printf \
+            'Error: Unable to mount the VirtualBox guest additions disk image.\n' \
+            1>&2
+        exit 2
+    fi
+fi
+
+printf \
+    'Info: Installing the VirtualBox Guest Additions...\n'
+vboxga_installer_opts=(
+    # Accept the license
+    --accept
+)
+if ! (
+    # NOTE: For some reason the installer return 2 even when successfully executed, ignore it for now
+    sudo /mnt/VBoxLinuxAdditions.run "${vboxga_installer_opts[@]}" \
+        || test "${?}" == 2
+    ); then
+    printf \
+        'Error: Unable to install the VirtualBox Guest Additions.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
     'Info: Updating all packages in the system to apply bug and security fixes...\n'
 apt_get_full_upgrade_opts=(
     -y
@@ -280,27 +337,6 @@ if ! sudo apt-get install \
     "${ubuntu_desktop_pkgs[@]}"; then
     printf \
         'Error: Unable to install the minimal variant of the Ubuntu desktop.\n' \
-        1>&2
-    exit 2
-fi
-
-printf \
-    'Info: Installing VirtualBox guest support packages...\n'
-virtualbox_guest_addition_pkgs=(
-    # Ubuntu kernel now includes VirtualBox guest drivers, no need to install the virtualbox-guest-dkms package
-    # https://bugs.launchpad.net/ubuntu/+source/virtualbox/+bug/1933248
-    virtualbox-guest-utils
-    virtualbox-guest-x11
-)
-apt_get_install_opts=(
-    -y
-    --no-install-recommends
-)
-if ! sudo apt-get install \
-    "${apt_get_install_opts[@]}" \
-    "${virtualbox_guest_addition_pkgs[@]}"; then
-    printf \
-        'Error: Unable to install VirtualBox support packages.\n' \
         1>&2
     exit 2
 fi
