@@ -302,19 +302,6 @@ if ! sudo apt-get install \
 fi
 
 printf \
-    'Info: Granting the vagrant user sudo access...\n'
-usermod_opts=(
-    -a
-    -G sudo
-)
-if ! sudo usermod "${usermod_opts[@]}" vagrant; then
-    printf \
-        'Error: Unable to grant the vagrant user sudo access.\n' \
-        1>&2
-    exit 2
-fi
-
-printf \
     'Info: Installing Google Chrome...\n'
 apt_get_install_opts=(
     -y
@@ -347,20 +334,6 @@ if ! sudo apt-get install \
     fcitx-mozc; then
     printf \
         'Error: Unable to install Japanese input method.\n' \
-        1>&2
-    exit 2
-fi
-
-printf \
-    'Info: Installing Noto fonts for CJKV character rendering support...\n'
-apt_get_install_opts=(
-    -y
-)
-if ! sudo apt-get install \
-    "${apt_get_install_opts[@]}" \
-    fonts-noto; then
-    printf \
-        'Error: Unable to install Noto fonts for CJKV character rendering support.\n' \
         1>&2
     exit 2
 fi
