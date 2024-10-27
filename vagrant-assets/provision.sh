@@ -119,6 +119,15 @@ if ! tmpdir="$(
 fi
 
 printf \
+    'Info: Recording operation start time for provision time statistics...\n'
+if ! operation_start_epoch="$(date +%s)"; then
+    printf \
+        'Error: Unable to record operation start time for provision time statistics.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
     'Info: Creating the DEBIAN_FRONTEND environment variable passthrough sudoers drop-in configuration file...\n'
 DEBIAN_FRONTEND=noninteractive
 export DEBIAN_FRONTEND
@@ -328,7 +337,24 @@ if ! sudo systemctl disable systemd-networkd-wait-online.service; then
 fi
 
 printf \
-    'Info: Operation completed without errors.\n'
+    'Info: Recording operation end time for provision time statistics...\n'
+if ! operation_end_epoch="$(date +%s)"; then
+    printf \
+        'Error: Unable to record operation end time for provision time statistics.\n' \
+        1>&2
+    exit 2
+fi
+
+provision_time_duration="$((operation_end_epoch - operation_start_epoch))"
+provision_time_hours="$((provision_time_duration / 3600))"
+provision_time_minutes="$(((provision_time_duration % 3600) / 60))"
+provision_time_seconds="$((provision_time_duration % 60))"
+
+printf \
+    'Info: Operation completed without errors using %s hours, %s minutes, and %s seconds.\n' \
+    "${provision_time_hours}" \
+    "${provision_time_minutes}" \
+    "${provision_time_seconds}"
 
 printf \
     'Info: Triggering system reboot to apply changes...\n'
