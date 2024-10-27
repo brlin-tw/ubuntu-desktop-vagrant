@@ -34,10 +34,12 @@ required_commands=(
     mktemp
     reboot
     rm
+    sed
     snap
     sudo
     systemctl
     visudo
+    update-grub
     wget
 )
 flag_required_command_check_failed=false
@@ -347,6 +349,29 @@ printf \
 if ! sudo systemctl disable systemd-networkd-wait-online.service; then
     printf \
         'Error: Unable to workaround unnessary timeout due to the systemd-networkd-wait-online service.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
+    'Info: Patching the default GRUB Linux kernel boot command-line arguments...\n'
+sed_opts=(
+    --regexp-extended
+    --expression='s@^GRUB_CMDLINE_LINUX_DEFAULT="[^"]*"$@GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"@'
+    --in-place
+)
+if ! sed "${sed_opts[@]}" /etc/default/grub; then
+    printf \
+        'Error: Unable to patch the default GRUB Linux kernel boot command-line arguments.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
+    'Info: Applying the GRUB bootloader configuration changes...\n'
+if ! update-grub; then
+    printf \
+        'Error: Unable to apply the GRUB bootloader configuration changes.\n' \
         1>&2
     exit 2
 fi
