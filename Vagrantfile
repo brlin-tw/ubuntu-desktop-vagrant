@@ -63,6 +63,16 @@ Vagrant.configure("2") do |config|
   # Configure synced folders for ease access to project files
   config.vm.synced_folder ".", "/vagrant"
 
+  # Allow SSH agent forwarding in the SSH service
+  # SECURITY: The usage of this feature may have security concerns, use with care!
+  # https://security.stackexchange.com/questions/101783/are-there-any-risks-associated-with-ssh-agent-forwarding
+  #config.ssh.forward_agent = true
+
+  # Allow X11 forwarding in the SSH service
+  # SECURITY: The usage of this feature may have security concerns, use with care!
+  # https://security.stackexchange.com/questions/14815/security-concerns-with-x11-forwarding
+  #config.ssh.forward_x11 = true
+
   # Run provision program
   config.vm.provision :shell, path: "vagrant-assets/provision.sh"
 end
