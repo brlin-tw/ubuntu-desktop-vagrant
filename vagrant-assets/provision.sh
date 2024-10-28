@@ -328,6 +328,9 @@ ubuntu_desktop_pkgs=(
 
     # Allow GNOME Shell to reschedule KMS thread
     rtkit
+
+    # Fix missing Ubuntu Desktop Guide in the Help application
+    gnome-user-docs
 )
 apt_get_install_opts=(
     -y
