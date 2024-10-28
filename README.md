@@ -86,6 +86,8 @@ The following material are referenced during the development of this project:
   A Vagrant plugin that configures the guest VM to use user-specified timezone settings.
 * [Creating a Base Box | Vagrant | HashiCorp Developer](https://developer.hashicorp.com/vagrant/docs/boxes/base)  
   Explains how to create a base box for other Vagrant users to initialize from.
+* [Guest Additions | Oracle VirtualBox: User Guide](https://www.virtualbox.org/manual/topics/guestadditions.html#guestadd-dnd)  
+  Explains the Drag and Drop support of VirtualBox.
 
 ## Licensing
 
