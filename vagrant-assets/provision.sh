@@ -419,6 +419,36 @@ if ! update-grub; then
 fi
 
 printf \
+    'Info: Creating backup of the original GDM customization configuration...\n'
+gdm_customization_config_file=/etc/gdm3/custom.conf
+cp_opts=(
+    --archive
+)
+if ! cp \
+    "${cp_opts[@]}" \
+    "${gdm_customization_config_file}" \
+    "${gdm_customization_config_file}.orig-${operation_timestamp}"; then
+    printf \
+        'Error: Unable to create backup of the original GDM customization configuration.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
+    'Info: Configuring automatic login in GDM...\n'
+if ! cat >"${gdm_customization_config_file}" <<END_OF_FILE
+[daemon]
+AutomaticLoginEnable=True
+AutomaticLogin=vagrant
+END_OF_FILE
+    then
+    printf \
+        'Error: Unable to configure automatic login in GDM.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
     'Info: Recording operation end time for provision time statistics...\n'
 if ! operation_end_epoch="$(date +%s)"; then
     printf \

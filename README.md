@@ -92,6 +92,8 @@ The following material are referenced during the development of this project:
   Explains how to customize the VM name that appears in the VirtualBox GUI.
 * [config.vm.hostname - config.vm - Vagrantfile | Vagrant | HashiCorp Developer](https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings#config-vm-hostname)  
   Explains how to customize the guest VM hostname.
+* [Configure automatic login](https://help.gnome.org/admin/system-admin-guide/stable/login-automatic.html.en)  
+  Explains how to configure automatic login in GDM.
 
 ## Licensing
 
