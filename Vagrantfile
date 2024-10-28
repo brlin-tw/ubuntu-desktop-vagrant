@@ -4,8 +4,15 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-24.04"
 
+  # Hostname in guest VM
+  config.vm.hostname = "ubuntu-desktop-vm"
+
   config.vm.provider :virtualbox do |v|
     v.gui = true
+
+    # Name that appears in the VirtualBox GUI
+    v.name = "Ubuntu Desktop VM"
+
     v.cpus = 2
     v.memory = 1024
 
