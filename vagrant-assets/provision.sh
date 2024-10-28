@@ -405,6 +405,15 @@ END_OF_FILE
 fi
 
 printf \
+    'Info: Disabling suspend power management action...\n'
+if ! systemctl mask suspend.target; then
+    printf \
+        'Error: Unable to disable suspend power management action.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
     'Info: Recording operation end time for provision time statistics...\n'
 if ! operation_end_epoch="$(date +%s)"; then
     printf \
