@@ -78,6 +78,12 @@ The following material are referenced during the development of this project:
   Explains how to use the `storagectl` and `storageattach` `VboxManage` sub-commands.
 * [jeffskinnerbox/ubuntu-desktop: Vagrant Base Box for Ubuntu Desktop](https://github.com/jeffskinnerbox/ubuntu-desktop)  
   Project with a similar goal and different customizations.
+* [dotless-de/vagrant-vbguest: A Vagrant plugin to keep your VirtualBox Guest Additions up to date](https://github.com/dotless-de/vagrant-vbguest)  
+  A Vagrant plugin that provides way to install/update the VirtualBox Guest Additions in the guest VM.  It is obsoleted, though...
+* [vagrant-proxyconf - Proxy Configuration Plugin for Vagrant](https://tmatilai.github.io/vagrant-proxyconf/)  
+  A Vagrant plugin that configures the guest VM to use user-specified proxy settings.
+* [tmatilai/vagrant-timezone: Vagrant plugin that configures the time zone of a virtual machine](https://github.com/tmatilai/vagrant-timezone)  
+  A Vagrant plugin that configures the guest VM to use user-specified timezone settings.
 
 ## Licensing
 
