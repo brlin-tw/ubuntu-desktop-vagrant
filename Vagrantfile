@@ -33,6 +33,9 @@ Vagrant.configure("2") do |config|
 
     # Supress warning messages regarding mouse capturing, which shouldn't be a concern for the running operating system
     v.customize ["setextradata", "global", "GUI/SuppressMessages", "all"]
+
+    # Set much useful initial VM console size dimension(in 16:9 aspect ratio, but should be smaller than majority 1920x1080 physical screens)
+    v.customize ["setextradata", :id, "GUI/LastGuestSizeHint", "1280,720"]
   end
 
   config.vm.synced_folder ".", "/vagrant"
