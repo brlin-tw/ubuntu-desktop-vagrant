@@ -30,6 +30,9 @@ Vagrant.configure("2") do |config|
     # WORKAROUND: In 7.0.3 "--medium=additions" only work if we first set the medium to an empty
     v.customize ["storageattach", :id, "--storagectl=SATA Controller", "--port=1", "--type=dvddrive", "--medium=emptydrive"]
     v.customize ["storageattach", :id, "--storagectl=SATA Controller", "--port=1", "--type=dvddrive", "--medium=additions"]
+
+    # Supress warning messages regarding mouse capturing, which shouldn't be a concern for the running operating system
+    v.customize ["setextradata", "global", "GUI/SuppressMessages", "all"]
   end
 
   config.vm.synced_folder ".", "/vagrant"
