@@ -325,6 +325,9 @@ ubuntu_desktop_pkgs=(
     yaru-theme-gtk
     yaru-theme-icon
     yaru-theme-sound
+
+    # Allow GNOME Shell to reschedule KMS thread
+    rtkit
 )
 apt_get_install_opts=(
     -y
