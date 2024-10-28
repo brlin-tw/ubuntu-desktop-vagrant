@@ -60,6 +60,7 @@ Vagrant.configure("2") do |config|
     #]
   end
 
+  # Configure synced folders for ease access to project files
   config.vm.synced_folder ".", "/vagrant"
 
   # Run provision program
