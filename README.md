@@ -23,7 +23,7 @@ The following prerequisites must be match in order to use this solution:
 
 Follow the following instructions to use this solution:
 
-1. Download the product release archive from [the Releases page](https://gitlab.com/brlin/ubuntu-desktop-vagrant/-/releases)
+1. Download the product release archive from [the Releases page](https://gitlab.com/brlin/ubuntu-desktop-vagrant/-/releases).
 1. Extract the product release archive.
 1. Launch a text terminal.
 1. Change the working directory to the extracted product release directory by running the following command:
