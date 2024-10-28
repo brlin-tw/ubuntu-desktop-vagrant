@@ -44,6 +44,20 @@ Vagrant.configure("2") do |config|
     # Enable host/guest file drag & drop support
     # NOTE: This does not work reliably(or, at all) in some desktop environments
     v.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+
+    # Enable USB controller emulation support
+    # NOTE: USB 3.0 controller support depend on the VirtualBox Expansion Pack which is under a non-commercial license!
+    #v.customize ["modifyvm", :id, "--usbehci", "on"]
+    #v.customize ["modifyvm", :id, "--usbxhci", "on"]
+
+    # Setup USB host device auto-redirection filter
+    # FIXME: This configuration is NOT idempotent(additional entries will be created in subsequent runs)
+    #v.customize [
+    #    'usbfilter', 'add', '0', '--target', :id,
+    #    '--name', 'Device filter name',
+    #    '--vendorid', '0x1234',
+    #    '--productid', '0x5678'
+    #]
   end
 
   config.vm.synced_folder ".", "/vagrant"
