@@ -72,6 +72,12 @@ The following material are referenced during the development of this project:
   Explains the reason why the virtualbox-guest-dkms package is no longer available in recent Ubuntu releases.
 * [Bug #2076520 “Ubuntu 24.04 LTS VBox VM does not boot anymore \[...” : Bugs : linux package : Ubuntu](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2076520)  
   Bug report regarding the problem where guest support no longer works when upgrading the Ubuntu kernel on a Ubuntu 24.04 system.
+* [How to "insert" guest additions image in VirtualBox from command line, while VM is running? - Unix & Linux Stack Exchange](https://unix.stackexchange.com/questions/309980/how-to-insert-guest-additions-image-in-virtualbox-from-command-line-while-vm)  
+  Explains how to programmically attach the VirtualBox Guest Additions installation ODD image to the virtual machine.
+* [VBoxManage | Oracle VirtualBox: User Guide](https://www.virtualbox.org/manual/topics/vboxmanage.html)  
+  Explains how to use the `storagectl` and `storageattach` `VboxManage` sub-commands.
+* [jeffskinnerbox/ubuntu-desktop: Vagrant Base Box for Ubuntu Desktop](https://github.com/jeffskinnerbox/ubuntu-desktop)  
+  Project with a similar goal and different customizations.
 
 ## Licensing
 
