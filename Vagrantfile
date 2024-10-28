@@ -36,6 +36,14 @@ Vagrant.configure("2") do |config|
 
     # Set much useful initial VM console size dimension(in 16:9 aspect ratio, but should be smaller than majority 1920x1080 physical screens)
     v.customize ["setextradata", :id, "GUI/LastGuestSizeHint", "1280,720"]
+
+    # Enable clipboard sync support
+    # SECURITY: This setting may leak sensitive personal information, use with care!
+    v.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+
+    # Enable host/guest file drag & drop support
+    # NOTE: This does not work reliably(or, at all) in some desktop environments
+    v.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
   end
 
   config.vm.synced_folder ".", "/vagrant"
