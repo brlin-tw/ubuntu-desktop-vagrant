@@ -6,6 +6,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :virtualbox do |v|
     v.gui = true
+    v.cpus = 2
     v.memory = 1024
 
     # Increase the video memory size if the guest display auto-resizing stops working over a certain console window size dimension
