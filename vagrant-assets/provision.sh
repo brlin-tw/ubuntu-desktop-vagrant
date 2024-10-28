@@ -37,7 +37,6 @@ required_commands=(
     rm
     sed
     snap
-    sudo
     systemctl
     visudo
     update-grub
@@ -132,53 +131,9 @@ if ! operation_start_epoch="$(date +%s)"; then
     exit 2
 fi
 
-printf \
-    'Info: Creating the DEBIAN_FRONTEND environment variable passthrough sudoers drop-in configuration file...\n'
+# Provision stage don't have terminal to do any configuration
 DEBIAN_FRONTEND=noninteractive
 export DEBIAN_FRONTEND
-sudoers_file_temp="${tmpdir}/passthrough-debian-frontend-envvar"
-if ! cat >"${sudoers_file_temp}" <<END_OF_FILE
-# Allow pass-through the DEBIAN_FRONTEND environment variable for customizing debconf(7)'s frontend behavior
-Defaults:%sudo env_keep += "DEBIAN_FRONTEND"
-END_OF_FILE
-    then
-    printf \
-        'Error: Unable to create the DEBIAN_FRONTEND environment variable passthrough sudoers drop-in configuration file.\n' \
-        1>&2
-    exit 2
-fi
-
-printf \
-    'Info: Checking syntax of the DEBIAN_FRONTEND environment variable passthrough sudoers drop-in configuration file.\n'
-visudo_opts=(
-    --check
-    --file="${sudoers_file_temp}"
-)
-if ! visudo "${visudo_opts[@]}"; then
-    printf \
-        'Error: Syntax check failed for the DEBIAN_FRONTEND environment variable passthrough sudoers drop-in configuration file.\n' \
-        1>&2
-    exit 2
-fi
-
-printf \
-    'Info: Installing the DEBIAN_FRONTEND environment variable passthrough sudoers drop-in configuration file...\n'
-sudoers_file_installed=/etc/sudoers.d/passthrough-debian-frontend-envvar
-install_opts=(
-    --owner root
-    --group root
-    --mode 0644
-    --verbose
-)
-if ! install \
-    "${install_opts[@]}" \
-    "${sudoers_file_temp}" \
-    "${sudoers_file_installed}"; then
-    printf \
-        'Error: Unable to install the DEBIAN_FRONTEND environment variable passthrough sudoers drop-in configuration file.\n' \
-        1>&2
-    exit 2
-fi
 
 printf \
     'Info: Installing the Google Chrome package validation key...\n'
@@ -189,7 +144,7 @@ wget_opts=(
     -O -
 )
 if ! wget "${wget_opts[@]}" https://dl-ssl.google.com/linux/linux_signing_key.pub \
-    | sudo apt-key add -; then
+    | apt-key add -; then
     printf \
         'Error: Unable to install the Google Chrome package validation key.\n' \
         1>&2
@@ -198,7 +153,8 @@ fi
 
 printf \
     'Info: Configuring the Google Chrome APT software source list...\n'
-if ! sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'; then
+if ! echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' \
+    >/etc/apt/sources.list.d/google-chrome.list; then
     printf \
         'Error: Unable to configure the Google Chrome APT software source list.\n' \
         1>&2
@@ -207,7 +163,7 @@ fi
 
 printf \
     'Info: Updating the APT software source local cache...\n'
-if ! sudo apt-get update; then
+if ! apt-get update; then
     printf \
         'Error: Unable to update the APT software source local cache.\n' \
         1>&2
@@ -233,7 +189,7 @@ apt_get_install_opts=(
     -y
     --no-install-recommends
 )
-if ! sudo apt-get install \
+if ! apt-get install \
     "${apt_get_install_opts[@]}" \
     "${vboxga_build_dependencies_pkgs[@]}"; then
     printf \
@@ -245,7 +201,7 @@ fi
 if ! test -e /mnt/VBoxLinuxAdditions.run; then
     printf \
         'Info: Mounting the VirtualBox guest additions disk image...\n'
-    if ! sudo mount -o ro /dev/sr0 /mnt; then
+    if ! mount -o ro /dev/sr0 /mnt; then
         printf \
             'Error: Unable to mount the VirtualBox guest additions disk image.\n' \
             1>&2
@@ -261,7 +217,7 @@ vboxga_installer_opts=(
 )
 if ! (
     # NOTE: For some reason the installer return 2 even when successfully executed, ignore it for now
-    sudo /mnt/VBoxLinuxAdditions.run "${vboxga_installer_opts[@]}" \
+    /mnt/VBoxLinuxAdditions.run "${vboxga_installer_opts[@]}" \
         || test "${?}" == 2
     ); then
     printf \
@@ -275,7 +231,7 @@ printf \
 apt_get_full_upgrade_opts=(
     -y
 )
-if ! sudo apt-get full-upgrade "${apt_get_full_upgrade_opts[@]}"; then
+if ! apt-get full-upgrade "${apt_get_full_upgrade_opts[@]}"; then
     printf \
         'Error: Unable to update all packages in the system to apply bug and security fixes...\n' \
         1>&2
@@ -338,7 +294,7 @@ apt_get_install_opts=(
     # There're some recommended packages that are not useful in a VM, we avoid installing them while manually select packages that is indeed useful in general
     --no-install-recommends
 )
-if ! sudo apt-get install \
+if ! apt-get install \
     "${apt_get_install_opts[@]}" \
     "${ubuntu_desktop_pkgs[@]}"; then
     printf \
@@ -352,7 +308,7 @@ printf \
 apt_get_install_opts=(
     -y
 )
-if ! sudo apt-get install \
+if ! apt-get install \
     "${apt_get_install_opts[@]}" \
     google-chrome-stable; then
     printf \
@@ -363,7 +319,7 @@ fi
 
 printf \
     'Info: Installing Mozilla Firefox...\n'
-if ! sudo snap install firefox; then
+if ! snap install firefox; then
     printf \
         'Error: Unable to install Mozilla Firefox.\n' \
         1>&2
@@ -376,7 +332,7 @@ if test "${ENABLE_JAPANESE_INPUT_METHOD_SUPPORT}" == true; then
     apt_get_install_opts=(
         -y
     )
-    if ! sudo apt-get install \
+    if ! apt-get install \
         "${apt_get_install_opts[@]}" \
         fcitx-mozc; then
         printf \
@@ -388,7 +344,7 @@ fi
 
 printf \
     'Info: Workarounding unnessary timeout due to the systemd-networkd-wait-online service...\n'
-if ! sudo systemctl disable systemd-networkd-wait-online.service; then
+if ! systemctl disable systemd-networkd-wait-online.service; then
     printf \
         'Error: Unable to workaround unnessary timeout due to the systemd-networkd-wait-online service.\n' \
         1>&2
@@ -470,7 +426,7 @@ printf \
 
 printf \
     'Info: Triggering system reboot to apply changes...\n'
-if ! sudo reboot; then
+if ! reboot; then
     printf \
         'Error: Unable to trigger system reboot to apply changes.\n' \
         1>&2
