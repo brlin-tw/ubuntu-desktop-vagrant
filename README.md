@@ -84,6 +84,8 @@ The following material are referenced during the development of this project:
   A Vagrant plugin that configures the guest VM to use user-specified proxy settings.
 * [tmatilai/vagrant-timezone: Vagrant plugin that configures the time zone of a virtual machine](https://github.com/tmatilai/vagrant-timezone)  
   A Vagrant plugin that configures the guest VM to use user-specified timezone settings.
+* [Creating a Base Box | Vagrant | HashiCorp Developer](https://developer.hashicorp.com/vagrant/docs/boxes/base)  
+  Explains how to create a base box for other Vagrant users to initialize from.
 
 ## Licensing
 
