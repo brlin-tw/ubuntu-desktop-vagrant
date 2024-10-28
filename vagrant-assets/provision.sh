@@ -38,7 +38,6 @@ required_commands=(
     sed
     snap
     systemctl
-    visudo
     update-grub
     wget
 )
