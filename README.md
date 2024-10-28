@@ -88,6 +88,10 @@ The following material are referenced during the development of this project:
   Explains how to create a base box for other Vagrant users to initialize from.
 * [Guest Additions | Oracle VirtualBox: User Guide](https://www.virtualbox.org/manual/topics/guestadditions.html#guestadd-dnd)  
   Explains the Drag and Drop support of VirtualBox.
+* [Virtual Machine Name - Configuration - VirtualBox Provider | Vagrant | HashiCorp Developer](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox/configuration#virtual-machine-name)  
+  Explains how to customize the VM name that appears in the VirtualBox GUI.
+* [config.vm.hostname - config.vm - Vagrantfile | Vagrant | HashiCorp Developer](https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings#config-vm-hostname)  
+  Explains how to customize the guest VM hostname.
 
 ## Licensing
 
