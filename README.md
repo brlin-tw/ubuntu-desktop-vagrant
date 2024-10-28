@@ -7,7 +7,7 @@ Provision reproducible and consistent Ubuntu desktop virtual machines using [Vag
 
 ## Prerequisites
 
-The following prerequisites must be match in order to use this solution:
+The following prerequisites must be satisfied in order to use this solution:
 
 * The host system must have the following software installed and has its commands available in the command search PATHs:
     + OPTIONAL - (Your preferred archive extraction application/utility)  
