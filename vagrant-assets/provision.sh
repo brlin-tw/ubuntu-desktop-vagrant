@@ -286,6 +286,9 @@ ubuntu_desktop_pkgs=(
 
     # Fix missing Ubuntu Desktop Guide in the Help application
     gnome-user-docs
+
+    # Support editing system files using admin:/(and mounting remote filesystems, etc.)
+    gvfs-backends
 )
 apt_get_install_opts=(
     -y
