@@ -289,9 +289,6 @@ ubuntu_desktop_pkgs=(
 
     # Support editing system files using admin:/(and mounting remote filesystems, etc.)
     gvfs-backends
-
-    # Legacy Polkit Local Authority support
-    polkitd-pkla
 )
 apt_get_install_opts=(
     -y
@@ -419,31 +416,34 @@ if ! systemctl mask suspend.target; then
 fi
 
 printf \
-    'Info: Ensuring that the system local Polkit Local Authority configuration drop-in directory exists...\n'
-pkla_dropin_config_dir="/etc/polkit-1/localauthority/50-local.d"
+    'Info: Ensuring that the system local Polkit rules drop-in directory exists...\n'
+polkit_rules_dropin_dir="/etc/polkit-1/rules.d"
 mkdir_opts=(
     --parents
     --verbose
 )
-if ! mkdir "${mkdir_opts[@]}" "${pkla_dropin_config_dir}"; then
+if ! mkdir "${mkdir_opts[@]}" "${polkit_rules_dropin_dir}"; then
     printf \
-        'Error: Unable to ensure that the system local Polkit Local Authority configuration drop-in directory exists.\n' \
+        'Error: Unable to ensure that the system local Polkit rules drop-in directory exists.\n' \
         1>&2
     exit 2
 fi
 
 printf \
-    'Info: Configuring Polkit password prompt override for the vagrant user...\n'
-passwordless_pkla_file="${pkla_dropin_config_dir}/disable-password-prompts-for-the-vagrant-user.pkla"
-if ! cat >"${passwordless_pkla_file}" <<END_OF_FILE
-[Disable password prompts for the vagrant user]
-Identity=unix-user:vagrant
-Action=*
-ResultActive=yes
+    'Info: Configuring Polkit authorization bypass for the vagrant user...\n'
+auth_bypass_rule_file="${polkit_rules_dropin_dir}/90-bypass-authorization-for-the-vagrant-user.rules"
+if ! cat >"${auth_bypass_rule_file}" <<END_OF_FILE
+// Bypass authorization for the vagrant user
+polkit.addRule(function(action, subject) {
+    if (subject.user !== 'vagrant')
+        return undefined;
+
+    return polkit.Result.YES;
+});
 END_OF_FILE
     then
     printf \
-        'Error: Unable to configure Polkit password prompt override for the vagrant user.\n' \
+        'Error: Unable to configure Polkit authorization bypass for the vagrant user.\n' \
         1>&2
     exit 2
 fi
