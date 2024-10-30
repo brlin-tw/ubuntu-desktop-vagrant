@@ -289,6 +289,9 @@ ubuntu_desktop_pkgs=(
 
     # Support editing system files using admin:/(and mounting remote filesystems, etc.)
     gvfs-backends
+
+    # Legacy Polkit Local Authority support
+    polkitd-pkla
 )
 apt_get_install_opts=(
     -y
@@ -411,6 +414,36 @@ printf \
 if ! systemctl mask suspend.target; then
     printf \
         'Error: Unable to disable suspend power management action.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
+    'Info: Ensuring that the system local Polkit Local Authority configuration drop-in directory exists...\n'
+pkla_dropin_config_dir="/etc/polkit-1/localauthority/50-local.d"
+mkdir_opts=(
+    --parents
+    --verbose
+)
+if ! mkdir "${mkdir_opts[@]}" "${pkla_dropin_config_dir}"; then
+    printf \
+        'Error: Unable to ensure that the system local Polkit Local Authority configuration drop-in directory exists.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
+    'Info: Configuring Polkit password prompt override for the vagrant user...\n'
+passwordless_pkla_file="${pkla_dropin_config_dir}/disable-password-prompts-for-the-vagrant-user.pkla"
+if ! cat >"${passwordless_pkla_file}" <<END_OF_FILE
+[Disable password prompts for the vagrant user]
+Identity=unix-user:vagrant
+Action=*
+ResultActive=yes
+END_OF_FILE
+    then
+    printf \
+        'Error: Unable to configure Polkit password prompt override for the vagrant user.\n' \
         1>&2
     exit 2
 fi

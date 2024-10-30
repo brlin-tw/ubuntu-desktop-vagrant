@@ -107,6 +107,10 @@ The following material are referenced during the development of this project:
   Explains how to customize the guest VM hostname.
 * [Configure automatic login](https://help.gnome.org/admin/system-admin-guide/stable/login-automatic.html.en)  
   Explains how to configure automatic login in GDM.
+* [sudo - How do I prevent PolicyKit from asking for a password? - Ask Ubuntu](https://askubuntu.com/questions/98006/how-do-i-prevent-policykit-from-asking-for-a-password)  
+  Explains how to implement password prompt override in Polkit.
+* [pklocalauthority](https://www.freedesktop.org/software/polkit/docs/0.105/pklocalauthority.8.html)  
+  Explains basic information and configuration paths of the Local Authority Polkit authority implementation.
 
 ## Licensing
 
