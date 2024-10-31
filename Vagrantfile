@@ -89,5 +89,10 @@ Vagrant.configure("2") do |config|
   end
 
   # Run provision program
-  config.vm.provision :shell, path: "vagrant-assets/provision.sh"
+  config.vm.provision :shell,
+    path: "vagrant-assets/provision.sh",
+    env: {
+      "ENABLE_JAPANESE_INPUT_METHOD_SUPPORT" => "false",
+      "ENABLE_VBOXADD_INSTALLATION" => "false"
+    }
 end
