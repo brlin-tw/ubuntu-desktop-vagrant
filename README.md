@@ -11,7 +11,7 @@ Provision reproducible and consistent Ubuntu desktop virtual machines using [Vag
 
 In order to improve the out-of-the-box user experience, this product introduces changes including but not limited to:
 
-* Remove features that are not useful in the virtual machine usecase(suspend, user authentications).
+* Remove features that are not useful in the virtual machine usecase(suspend, user authentications, and lock screens).
 * Workaround known bugs in the VirtualBox guest drivers.
 * Reduced boot time by optimizing VM configurations.
 * Improved default console size and aspect ratio.
