@@ -57,6 +57,7 @@ required_commands=(
     rm
     sed
     snap
+    stat
     sudo
     systemctl
     update-grub
@@ -140,6 +141,74 @@ is_debian_packages_installed(){
     fi
 }
 
+# Check whether the local cache of the APT package management system is stale
+#
+# Return values
+#
+# 0: Local cache is stale
+# 1: Local cache is not stale
+#
+# Process exit statuses:
+#
+# 99: Error occurred
+is_apt_local_cache_stale(){
+    local -a required_commands=(
+        # For determining the current time
+        date
+
+        # For determining the APT local cache creation time
+        stat
+    )
+    local required_command_check_failed=false
+    for command in "${required_commands[@]}"; do
+        if ! command -v "${command}" >/dev/null; then
+            printf \
+                'Error: %s: This function requires the "%s" command to be available in your command search PATHs.\n' \
+                "${FUNCNAME[0]}" \
+                "${command}" \
+                1>&2
+            required_command_check_failed=true
+        fi
+    done
+    if test "${required_command_check_failed}" == true; then
+        printf \
+            'Error: %s: Required command check failed.\n' \
+            "${FUNCNAME[0]}" \
+            1>&2
+        exit 99
+    fi
+
+    local apt_archive_cache_mtime_epoch
+    if ! apt_archive_cache_mtime_epoch="$(
+        stat \
+            --format=%Y \
+            /var/cache/apt/archives
+        )"; then
+        printf \
+            'Error: %s: Unable to query the modification time of the APT software sources cache directory.\n' \
+            "${FUNCNAME[0]}" \
+            1>&2
+        exit 99
+    fi
+
+    local current_time_epoch
+    if ! current_time_epoch="$(
+        date +%s
+        )"; then
+        printf \
+            'Error: %s: Unable to query the current time.\n' \
+            "${FUNCNAME[0]}" \
+            1>&2
+        exit 99
+    fi
+
+    if test "$((current_time_epoch - apt_archive_cache_mtime_epoch))" -ge 86400; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 printf \
     'Info: Determining operation timestamp...\n'
 if ! operation_timestamp="$(date +%Y%m%d-%H%M%S)"; then
@@ -205,13 +274,15 @@ if ! echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' 
     exit 2
 fi
 
-printf \
-    'Info: Updating the APT software source local cache...\n'
-if ! apt-get update; then
+if is_apt_local_cache_stale; then
     printf \
-        'Error: Unable to update the APT software source local cache.\n' \
-        1>&2
-    exit 2
+        'Info: Updating the APT software source local cache...\n'
+    if ! apt-get update; then
+        printf \
+            'Error: Unable to update the APT software source local cache.\n' \
+            1>&2
+        exit 2
+    fi
 fi
 
 if test "${ENABLE_VBOXADD_INSTALLATION}" == true; then
