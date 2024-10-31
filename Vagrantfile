@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
     # Increase the video memory size if the guest display auto-resizing stops working over a certain console window size dimension
     # Default: 33MiB, increasing it to 64MiB should work in most usecases
     # https://www.virtualbox.org/manual/topics/BasicConcepts.html#settings-display
-    v.customize ["modifyvm", :id, "--vram", 64]
+    v.customize ["modifyvm", :id, "--vram=64"]
 
     # Enable 3D acceleration for better performance
     v.customize ["modifyvm", :id, "--accelerate-3d=on"]
