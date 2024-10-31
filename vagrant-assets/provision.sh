@@ -451,7 +451,7 @@ END_OF_FILE
 fi
 
 printf \
-    'Info: Disabling automatic session locking for the vagrant user...\n'
+    'Info: Checking runtime dependencies for the Gsettings modification operations...\n'
 required_commands=(
     gsettings
 )
@@ -465,6 +465,8 @@ for command in "${required_commands[@]}"; do
     fi
 done
 
+printf \
+    'Info: Querying the identification number of the "vagrant" user...\n'
 if ! vagrant_userid="$(id --user vagrant)"; then
     printf \
         'Error: Unable to query the identification number of the "vagrant" user.\n' \
@@ -472,6 +474,8 @@ if ! vagrant_userid="$(id --user vagrant)"; then
     exit 2
 fi
 
+printf \
+    'Info: Disabling automatic session locking for the vagrant user...\n'
 sudo_opts=(
     --login
     --user=vagrant
@@ -479,6 +483,21 @@ sudo_opts=(
 if ! sudo "${sudo_opts[@]}" \
     DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${vagrant_userid}/bus" \
     gsettings set org.gnome.desktop.screensaver lock-enabled false; then
+    printf \
+        'Error: Unable to disable automatic session locking for the vagrant user.\n' \
+        1>&2
+    exit 2
+fi
+
+printf \
+    'Info: Disabling screen blanking for the vagrant user...\n'
+sudo_opts=(
+    --login
+    --user=vagrant
+)
+if ! sudo "${sudo_opts[@]}" \
+    DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${vagrant_userid}/bus" \
+    gsettings set org.gnome.desktop.session idle-delay 0; then
     printf \
         'Error: Unable to disable automatic session locking for the vagrant user.\n' \
         1>&2
