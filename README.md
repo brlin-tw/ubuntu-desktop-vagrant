@@ -95,6 +95,27 @@ Setting the value of this environment variable to `false` can reduce the time re
 
 **Default value:** `true`
 
+### INSTALL_LANGUAGE_SUPPORT
+
+Specify whether to install language support packages, and if it should be installed, which locale should be used.
+
+**Supported values:**
+
+* `null`: Don't install language support packages
+* Values supported by the `-l` option of the `check-langauge-support` command:
+    + _ll_
+    + _lll_
+    + _ll_\__CC_
+    + _lll_\__CC_
+    + _ll_@_variant_
+    + _lll_@_variant_
+    + _ll_\__CC_@_variant_
+    + _lll_\__CC_@_variant_
+    + `zh-hans`
+    + `zh-hant`
+
+**Default value:** `null`
+
 ## Credits
 
 We would like to provide our gratitude to Yoshimasa Niwa, [who implemented and published the original implementation](https://gist.github.com/niw/bed28f823b4ebd2c504285ff99c1b2c2/0338af262d2c6664ed4ec2a2fc8d3f0b8b5d25f6).

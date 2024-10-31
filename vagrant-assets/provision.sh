@@ -4,8 +4,8 @@
 # Copyright 2024 林博仁(Buo-ren Lin) <buo.ren.lin@gmail.com>
 # SPDX-License-Identifier: MIT
 
-ENABLE_JAPANESE_INPUT_METHOD_SUPPORT="${ENABLE_JAPANESE_INPUT_METHOD_SUPPORT:-false}"
 ENABLE_VBOXADD_INSTALLATION="${ENABLE_VBOXADD_INSTALLATION:-true}"
+INSTALL_LANGUAGE_SUPPORT="${INSTALL_LANGUAGE_SUPPORT:-null}"
 
 printf \
     'Info: Configuring the defensive interpreter behaviors...\n'
@@ -28,7 +28,6 @@ fi
 printf \
     'Info: Checking runtime parameters...\n'
 boolean_params=(
-    ENABLE_JAPANESE_INPUT_METHOD_SUPPORT
     ENABLE_VBOXADD_INSTALLATION
 )
 boolean_regex='^(true|false)$'
@@ -41,6 +40,16 @@ for param in "${boolean_params[@]}"; do
         exit 1
     fi
 done
+
+language_support_locales_regex='^(zh-han[st]|[[:alpha:]]{2,3}(_[[:alpha:]]{2})?(@[[:alpha:]]+)?|null)$'
+if ! [[ "${INSTALL_LANGUAGE_SUPPORT}" =~ ${language_support_locales_regex} ]]; then
+    printf \
+        'Error: The value of the "INSTALL_LANGUAGE_SUPPORT" environment variable(%s) is invalid, refer to the documentation for more info.\n' \
+        "${param}" \
+        "${INSTALL_LANGUAGE_SUPPORT}" \
+        1>&2
+    exit 1
+fi
 
 printf \
     'Info: Checking the existence of the required commands...\n'
@@ -456,23 +465,6 @@ if ! snap install firefox; then
     exit 2
 fi
 
-if test "${ENABLE_JAPANESE_INPUT_METHOD_SUPPORT}" == true \
-    && ! is_debian_packages_installed fcitx-mozc; then
-    printf \
-        'Info: Installing Japanese input method...\n'
-    apt_get_install_opts=(
-        -y
-    )
-    if ! apt-get install \
-        "${apt_get_install_opts[@]}" \
-        fcitx-mozc; then
-        printf \
-            'Error: Unable to install Japanese input method.\n' \
-            1>&2
-        exit 2
-    fi
-fi
-
 printf \
     'Info: Workarounding unnessary timeout due to the systemd-networkd-wait-online service...\n'
 if ! systemctl disable systemd-networkd-wait-online.service; then
@@ -629,6 +621,207 @@ if ! sudo "${sudo_opts[@]}" \
         'Error: Unable to disable automatic session locking for the vagrant user.\n' \
         1>&2
     exit 2
+fi
+
+language_support_dependency_pkgs=(
+    # For the language2locale utility
+    accountsservice
+
+    # For the check-language-support command
+    language-selector-common
+)
+if ! is_debian_packages_installed "${language_support_dependency_pkgs[@]}"; then
+    printf \
+        'Info: Installing the runtime dependencies of the language support installation operations...\n'
+    apt_get_install_opts=(
+        -y
+    )
+    if ! apt-get install "${apt_get_install_opts[@]}" \
+        "${language_support_dependency_pkgs[@]}"; then
+        printf \
+            'Error: Unable to install the runtime dependencies of the language support installation operations.\n' \
+            1>&2
+        exit 2
+    fi
+fi
+
+if test "${INSTALL_LANGUAGE_SUPPORT}" != null; then
+    printf \
+        'Info: Querying the packages for the language support of the "%s" locale...\n' \
+        "${INSTALL_LANGUAGE_SUPPORT}"
+    # NOTE: Fcitx will be enumerated if XDG_CURRENT_DESKTOP isn't GNOME
+    # /usr/lib/python3/dist-packages/language_support_pkgs.py
+    if ! language_support_pkgs_raw="$(
+        XDG_CURRENT_DESKTOP=GNOME check-language-support -l "${INSTALL_LANGUAGE_SUPPORT}"
+        )"; then
+        printf \
+            'Error: Unable to query the packages for the language support of the "%s" locale.\n' \
+            "${INSTALL_LANGUAGE_SUPPORT}" \
+            1>&2
+        exit 2
+    fi
+
+    printf \
+        'Info: Reading the output of the "check-langauge-support" command to the language_support_pkgs array...\n'
+    if ! IFS=" " read -r -a language_support_pkgs <<<"${language_support_pkgs_raw}"; then
+        printf \
+            'Error: Unable to read the output of the "check-langauge-support" command to the language_support_pkgs array.\n' \
+            1>&2
+        exit 2
+    fi
+
+    # It is normally helpful to install zh_CN along with zh_TW
+    language_support_additional_pkgs=()
+    case "${INSTALL_LANGUAGE_SUPPORT}" in
+        zh_TW)
+            printf \
+                'Info: Querying the packages for the language support of the "zh_CN" locale...\n'
+            if ! language_support_additional_pkgs_raw="$(
+                XDG_CURRENT_DESKTOP=GNOME check-language-support -l zh_CN
+                )"; then
+                printf \
+                    'Error: Unable to check the packages for the language support of the "zh_CN" locale.\n' \
+                    1>&2
+                exit 2
+            fi
+
+            printf \
+                'Info: Reading the output of the "check-langauge-support" command to the language_support_additional_pkgs array...\n'
+            if ! IFS=" " read -r -a language_support_additional_pkgs <<<"${language_support_additional_pkgs_raw}"; then
+                printf \
+                    'Error: Unable to read the output of the "check-langauge-support" command to the language_support_additional_pkgs array.\n' \
+                    1>&2
+                exit 2
+            fi
+
+            # Additional zh_CN and zh_TW manpages
+            language_support_additional_pkgs+=(manpages-zh)
+        ;;
+        zh_CN)
+            # Additional zh_CN and zh_TW manpages
+            language_support_additional_pkgs+=(manpages-zh)
+        ;;
+        *)
+            # Nothing to do for the rest of the locales
+            :
+        ;;
+    esac
+
+    if {
+        test "${#language_support_pkgs[@]}" -ne 0 \
+            || test "${#language_support_additional_pkgs[@]}" -ne 0
+        } && ! is_debian_packages_installed \
+            "${language_support_pkgs[@]}" \
+            "${language_support_additional_pkgs[@]}"; then
+        printf \
+            'Info: Installing the langauge support packages for the "%s" locale...\n' \
+            "${INSTALL_LANGUAGE_SUPPORT}"
+        apt_get_install_opts=(
+            -y
+        )
+        if ! apt-get install "${apt_get_install_opts[@]}" \
+            "${language_support_pkgs[@]}" \
+            "${language_support_additional_pkgs[@]}"; then
+            printf \
+                'Error: Unable to install the langauge support packages for the "%s" locale.\n' \
+                "${INSTALL_LANGUAGE_SUPPORT}" \
+                1>&2
+            exit 2
+        fi
+    fi
+
+    printf \
+        'Info: Configuring the default locale and language priority settings for the vagrant user...\n'
+    lang="${INSTALL_LANGUAGE_SUPPORT}.UTF-8"
+    if test "${INSTALL_LANGUAGE_SUPPORT}" == zh_TW; then
+        # It is normally helpful to fallback to zh_CN translation
+        language="${INSTALL_LANGUAGE_SUPPORT}:zh_CN:zh:en"
+    else
+        language="${INSTALL_LANGUAGE_SUPPORT}:en"
+    fi
+
+    sudo_opts=(
+        -u vagrant
+        --login
+    )
+    if ! sudo "${sudo_opts[@]}" \
+        /usr/share/language-tools/save-to-pam-env \
+            /home/vagrant \
+            "${lang}" \
+            "${language}"; then
+        printf \
+            'Error: Unable to configure default locale and language priority settings for the vagrant user.\n' \
+            1>&2
+        exit 2
+    fi
+
+    printf \
+        'Info: Configuring the miscellaneous locale settings for the vagrant user...\n'
+    sudo_opts=(
+        -u vagrant
+        --login
+    )
+    if ! sudo "${sudo_opts[@]}" \
+        /usr/share/language-tools/save-to-pam-env \
+            /home/vagrant \
+            "${lang}"; then
+        printf \
+            'Error: Unable to configure miscellaneous locale settings for the vagrant user.\n' \
+            1>&2
+        exit 2
+    fi
+
+    case "${INSTALL_LANGUAGE_SUPPORT}" in
+        zh_TW)
+            printf \
+                'Info: Configuring input sources for the "zh_TW" locale...\n'
+            if ! sudo "${sudo_opts[@]}" \
+                DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${vagrant_userid}/bus" \
+                gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'chewing')]"; then
+                printf \
+                    'Error: Unable to configure input sources for the "zh_TW" locale.\n' \
+                    1>&2
+                exit 2
+            fi
+        ;;
+        zh_CN)
+            printf \
+                'Info: Configuring input sources for the "zh_CN" locale...\n'
+            if ! sudo "${sudo_opts[@]}" \
+                DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${vagrant_userid}/bus" \
+                gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'libpinyin')]"; then
+                printf \
+                    'Error: Unable to configure input sources for the "zh_CN" locale.\n' \
+                    1>&2
+                exit 2
+            fi
+        ;;
+        ja_JP)
+            printf \
+                'Info: Configuring input sources for the "ja_JP" locale...\n'
+            if ! sudo "${sudo_opts[@]}" \
+                DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${vagrant_userid}/bus" \
+                gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'mozc-jp')]"; then
+                printf \
+                    'Error: Unable to configure input sources for the "ja_JP" locale.\n' \
+                    1>&2
+                exit 2
+            fi
+        ;;
+        *)
+            # We don't know how to set these locales yet
+            :
+        ;;
+    esac
+
+    printf \
+        'Info: Configuring the system locale settings...\n'
+    if ! localectl set-locale "${lang}"; then
+        printf \
+            'Error: Unable to configure the system locale settings.\n' \
+            1>&2
+        exit 2
+    fi
 fi
 
 printf \
