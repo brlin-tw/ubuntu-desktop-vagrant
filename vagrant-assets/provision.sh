@@ -408,6 +408,9 @@ ubuntu_desktop_pkgs=(
 
     # Support editing system files using admin:/(and mounting remote filesystems, etc.)
     gvfs-backends
+
+    # For displaying keyboard layout preview
+    gkbd-capplet
 )
 if ! is_debian_packages_installed "${ubuntu_desktop_pkgs[@]}"; then
     printf \
