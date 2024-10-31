@@ -26,6 +26,23 @@ if ! set "${set_opts[@]}"; then
 fi
 
 printf \
+    'Info: Checking runtime parameters...\n'
+boolean_params=(
+    ENABLE_JAPANESE_INPUT_METHOD_SUPPORT
+    ENABLE_VBOXADD_INSTALLATION
+)
+boolean_regex='^(true|false)$'
+for param in "${boolean_params[@]}"; do
+    if ! [[ "${!param}" =~ ${boolean_regex} ]]; then
+        printf \
+            'Error: The value of the "%s" environment variable should either be "true" or "false".\n' \
+            "${param}" \
+            1>&2
+        exit 1
+    fi
+done
+
+printf \
     'Info: Checking the existence of the required commands...\n'
 required_commands=(
     apt-get
