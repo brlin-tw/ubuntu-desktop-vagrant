@@ -82,11 +82,11 @@ Vagrant.configure("2") do |config|
   #config.ssh.forward_x11 = true
 
   # Configure forward proxy
-  if Vagrant.has_plugin?("vagrant-proxyconf")
-    config.proxy.http     = "http://192.168.49.1:8228/"
-    config.proxy.https    = "http://192.168.49.1:8228/"
-    config.proxy.no_proxy = "localhost,127.0.0.1,.example.com"
-  end
+  #if Vagrant.has_plugin?("vagrant-proxyconf")
+    #config.proxy.http     = "http://192.168.49.1:8228/"
+    #config.proxy.https    = "http://192.168.49.1:8228/"
+    #config.proxy.no_proxy = "localhost,127.0.0.1,.example.com"
+  #end
 
   # Run provision program
   config.vm.provision :shell,
