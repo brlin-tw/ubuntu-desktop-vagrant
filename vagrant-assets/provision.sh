@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: MIT
 
 ENABLE_JAPANESE_INPUT_METHOD_SUPPORT="${ENABLE_JAPANESE_INPUT_METHOD_SUPPORT:-false}"
+ENABLE_VBOXADD_INSTALLATION="${ENABLE_VBOXADD_INSTALLATION:-true}"
 
 printf \
     'Info: Configuring the defensive interpreter behaviors...\n'
@@ -171,60 +172,62 @@ if ! apt-get update; then
     exit 2
 fi
 
-printf \
-    'Info: Installing build dependencies of the VirtualBox guest additions...\n'
-if ! current_running_kernel_version="$(uname -r)"; then
+if test "${ENABLE_VBOXADD_INSTALLATION}" == true; then
     printf \
-        'Error: Unable to detect the current running Ubuntu kernel version.\n' \
-        1>&2
-    exit 2
-fi
-vboxga_build_dependencies_pkgs=(
-    dkms
-    gcc
-    make
-    linux-headers-generic
-    "linux-headers-${current_running_kernel_version}"
-)
-apt_get_install_opts=(
-    -y
-    --no-install-recommends
-)
-if ! apt-get install \
-    "${apt_get_install_opts[@]}" \
-    "${vboxga_build_dependencies_pkgs[@]}"; then
-    printf \
-        'Error: Unable to install VirtualBox support packages.\n' \
-        1>&2
-    exit 2
-fi
-
-if ! test -e /mnt/VBoxLinuxAdditions.run; then
-    printf \
-        'Info: Mounting the VirtualBox guest additions disk image...\n'
-    if ! mount -o ro /dev/sr0 /mnt; then
+        'Info: Installing build dependencies of the VirtualBox guest additions...\n'
+    if ! current_running_kernel_version="$(uname -r)"; then
         printf \
-            'Error: Unable to mount the VirtualBox guest additions disk image.\n' \
+            'Error: Unable to detect the current running Ubuntu kernel version.\n' \
             1>&2
         exit 2
     fi
-fi
+    vboxga_build_dependencies_pkgs=(
+        dkms
+        gcc
+        make
+        linux-headers-generic
+        "linux-headers-${current_running_kernel_version}"
+    )
+    apt_get_install_opts=(
+        -y
+        --no-install-recommends
+    )
+    if ! apt-get install \
+        "${apt_get_install_opts[@]}" \
+        "${vboxga_build_dependencies_pkgs[@]}"; then
+        printf \
+            'Error: Unable to install VirtualBox support packages.\n' \
+            1>&2
+        exit 2
+    fi
 
-printf \
-    'Info: Installing the VirtualBox Guest Additions...\n'
-vboxga_installer_opts=(
-    # Accept the license
-    --accept
-)
-if ! (
-    # NOTE: For some reason the installer return 2 even when successfully executed, ignore it for now
-    /mnt/VBoxLinuxAdditions.run "${vboxga_installer_opts[@]}" \
-        || test "${?}" == 2
-    ); then
+    if ! test -e /mnt/VBoxLinuxAdditions.run; then
+        printf \
+            'Info: Mounting the VirtualBox guest additions disk image...\n'
+        if ! mount -o ro /dev/sr0 /mnt; then
+            printf \
+                'Error: Unable to mount the VirtualBox guest additions disk image.\n' \
+                1>&2
+            exit 2
+        fi
+    fi
+
     printf \
-        'Error: Unable to install the VirtualBox Guest Additions.\n' \
-        1>&2
-    exit 2
+        'Info: Installing the VirtualBox Guest Additions...\n'
+    vboxga_installer_opts=(
+        # Accept the license
+        --accept
+    )
+    if ! (
+        # NOTE: For some reason the installer return 2 even when successfully executed, ignore it for now
+        /mnt/VBoxLinuxAdditions.run "${vboxga_installer_opts[@]}" \
+            || test "${?}" == 2
+        ); then
+        printf \
+            'Error: Unable to install the VirtualBox Guest Additions.\n' \
+            1>&2
+        exit 2
+    fi
 fi
 
 printf \
