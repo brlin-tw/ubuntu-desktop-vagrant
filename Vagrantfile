@@ -93,6 +93,6 @@ Vagrant.configure("2") do |config|
     path: "vagrant-assets/provision.sh",
     env: {
       "ENABLE_JAPANESE_INPUT_METHOD_SUPPORT" => "false",
-      "ENABLE_VBOXADD_INSTALLATION" => "false"
+      "ENABLE_VBOXADD_INSTALLATION" => "true"
     }
 end
