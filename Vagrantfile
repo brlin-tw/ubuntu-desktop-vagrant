@@ -82,6 +82,7 @@ Vagrant.configure("2") do |config|
   #config.ssh.forward_x11 = true
 
   # Configure forward proxy
+  # https://github.com/tmatilai/vagrant-proxyconf?tab=readme-ov-file#configuration-keys
   #if Vagrant.has_plugin?("vagrant-proxyconf")
     #config.proxy.http     = "http://192.168.49.1:8228/"
     #config.proxy.https    = "http://192.168.49.1:8228/"
