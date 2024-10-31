@@ -67,6 +67,34 @@ Follow the following instructions to use this solution:
 
    All data will be lost after the operation.
 
+## Environment variables that can change the behavior of the provision program
+
+The following are the environment variables that can change the behavior of the provision program, which can be set in the `config.vm.provision :shell, path: "vagrant-assets/provision.sh"` call in [the Vagrantfile](Vagrantfile):
+
+### ENABLE_JAPANESE_INPUT_METHOD_SUPPORT
+
+Whether to enable the Japanese input method support.
+
+**Supported values:**
+
+* `true`
+* `false`
+
+**Default value:** `false`
+
+### ENABLE_VBOXADD_INSTALLATION
+
+Whether to re-install the VirtualBox Guest Additions, which should fix some problems of the guest support drivers from the distribution installation.
+
+Setting the value of this environment variable to `false` can reduce the time required for re-provisioning the system.
+
+**Supported values:**
+
+* `true`
+* `false`
+
+**Default value:** `true`
+
 ## Credits
 
 We would like to provide our gratitude to Yoshimasa Niwa, [who implemented and published the original implementation](https://gist.github.com/niw/bed28f823b4ebd2c504285ff99c1b2c2/0338af262d2c6664ed4ec2a2fc8d3f0b8b5d25f6).
