@@ -48,6 +48,7 @@ required_commands=(
     apt-get
     cat
     date
+    dpkg
     id
     install
     mktemp
@@ -114,6 +115,30 @@ if ! trap trap_err ERR; then
         1>&2
     exit 2
 fi
+
+# Check whether the specified Debian packages are installed
+#
+# Return values
+#
+# 0: All specified packages are installed
+# 1: Some of the specified packages are not installed
+is_debian_packages_installed(){
+    local -a packages=("${@}")
+
+    if ! command -v dpkg >/dev/null; then
+        printf \
+            'Error: %s: This function requires the "dpkg" command to be available in your command search PATHs.\n' \
+            "${FUNCNAME[0]}" \
+            1>&2
+        exit 99
+    fi
+
+    if ! dpkg --status "${packages[@]}" &>/dev/null; then
+        return 1
+    else
+        return 0
+    fi
+}
 
 printf \
     'Info: Determining operation timestamp...\n'
@@ -205,17 +230,20 @@ if test "${ENABLE_VBOXADD_INSTALLATION}" == true; then
         linux-headers-generic
         "linux-headers-${current_running_kernel_version}"
     )
-    apt_get_install_opts=(
-        -y
-        --no-install-recommends
-    )
-    if ! apt-get install \
-        "${apt_get_install_opts[@]}" \
-        "${vboxga_build_dependencies_pkgs[@]}"; then
-        printf \
-            'Error: Unable to install VirtualBox support packages.\n' \
-            1>&2
-        exit 2
+
+    if ! is_debian_packages_installed "${vboxga_build_dependencies_pkgs[@]}"; then
+        apt_get_install_opts=(
+            -y
+            --no-install-recommends
+        )
+        if ! apt-get install \
+            "${apt_get_install_opts[@]}" \
+            "${vboxga_build_dependencies_pkgs[@]}"; then
+            printf \
+                'Error: Unable to install VirtualBox support packages.\n' \
+                1>&2
+            exit 2
+        fi
     fi
 
     if ! test -e /mnt/VBoxLinuxAdditions.run; then
@@ -259,8 +287,6 @@ if ! apt-get full-upgrade "${apt_get_full_upgrade_opts[@]}"; then
     exit 2
 fi
 
-printf \
-    'Info: Installing the minimal variant of the Ubuntu desktop...\n'
 ubuntu_desktop_pkgs=(
     # Install the minimal variant as the user won't likely need the complete desktop applications
     ubuntu-desktop-minimal
@@ -312,33 +338,39 @@ ubuntu_desktop_pkgs=(
     # Support editing system files using admin:/(and mounting remote filesystems, etc.)
     gvfs-backends
 )
-apt_get_install_opts=(
-    -y
-
-    # There're some recommended packages that are not useful in a VM, we avoid installing them while manually select packages that is indeed useful in general
-    --no-install-recommends
-)
-if ! apt-get install \
-    "${apt_get_install_opts[@]}" \
-    "${ubuntu_desktop_pkgs[@]}"; then
+if ! is_debian_packages_installed "${ubuntu_desktop_pkgs[@]}"; then
     printf \
-        'Error: Unable to install the minimal variant of the Ubuntu desktop.\n' \
-        1>&2
-    exit 2
+        'Info: Installing the minimal variant of the Ubuntu desktop...\n'
+    apt_get_install_opts=(
+        -y
+
+        # There're some recommended packages that are not useful in a VM, we avoid installing them while manually select packages that is indeed useful in general
+        --no-install-recommends
+    )
+    if ! apt-get install \
+        "${apt_get_install_opts[@]}" \
+        "${ubuntu_desktop_pkgs[@]}"; then
+        printf \
+            'Error: Unable to install the minimal variant of the Ubuntu desktop.\n' \
+            1>&2
+        exit 2
+    fi
 fi
 
-printf \
-    'Info: Installing Google Chrome...\n'
-apt_get_install_opts=(
-    -y
-)
-if ! apt-get install \
-    "${apt_get_install_opts[@]}" \
-    google-chrome-stable; then
+if ! is_debian_packages_installed google-chrome-stable; then
     printf \
-        'Error: Unable to install Google Chrome.\n' \
-        1>&2
-    exit 2
+        'Info: Installing Google Chrome...\n'
+    apt_get_install_opts=(
+        -y
+    )
+    if ! apt-get install \
+        "${apt_get_install_opts[@]}" \
+        google-chrome-stable; then
+        printf \
+            'Error: Unable to install Google Chrome.\n' \
+            1>&2
+        exit 2
+    fi
 fi
 
 printf \
@@ -350,7 +382,8 @@ if ! snap install firefox; then
     exit 2
 fi
 
-if test "${ENABLE_JAPANESE_INPUT_METHOD_SUPPORT}" == true; then
+if test "${ENABLE_JAPANESE_INPUT_METHOD_SUPPORT}" == true \
+    && ! is_debian_packages_installed fcitx-mozc; then
     printf \
         'Info: Installing Japanese input method...\n'
     apt_get_install_opts=(
