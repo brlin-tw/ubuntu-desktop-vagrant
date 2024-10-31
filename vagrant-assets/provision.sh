@@ -494,6 +494,8 @@ if ! operation_end_epoch="$(date +%s)"; then
     exit 2
 fi
 
+printf \
+    'Info: Determining provision total time...\n'
 provision_time_duration="$((operation_end_epoch - operation_start_epoch))"
 provision_time_hours="$((provision_time_duration / 3600))"
 provision_time_minutes="$(((provision_time_duration % 3600) / 60))"
