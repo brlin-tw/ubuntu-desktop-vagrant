@@ -17,6 +17,10 @@ In order to improve the out-of-the-box user experience, this product introduces 
 * Improved default console size and aspect ratio.
 * Suppress unnecessary input-capturing warning user interfaces.
 * Include common Vagrantfile template configuration for further customizations.
+* Support configuring localization and default input method for the following locales:
+    + [Chinese(China)](doc-assets/input-sources-zhcn.png)
+    + [Chinese(Taiwan)](doc-assets/input-sources-zhtw.png)
+    + [Japanese(Japan)](doc-assets/input-sources-jajp.png)
 
 ## Prerequisites
 
