@@ -804,10 +804,12 @@ if test "${INSTALL_LANGUAGE_SUPPORT}" != null; then
         -u vagrant
         --login
     )
+    # NOTE: Avoid confusing locale name output in stdout
     if ! sudo "${sudo_opts[@]}" \
         /usr/share/language-tools/save-to-pam-env \
             /home/vagrant \
-            "${lang}"; then
+            "${lang}" \
+            >/dev/null; then
         printf \
             'Error: Unable to configure miscellaneous locale settings for the vagrant user.\n' \
             1>&2
