@@ -68,6 +68,7 @@ required_commands=(
     stat
     sudo
     systemctl
+    uname
     update-grub
     wget
 )
@@ -256,32 +257,6 @@ fi
 DEBIAN_FRONTEND=noninteractive
 export DEBIAN_FRONTEND
 
-printf \
-    'Info: Installing the Google Chrome package validation key...\n'
-wget_opts=(
-    -q
-
-    # Output content to the standard output device
-    -O -
-)
-if ! wget "${wget_opts[@]}" https://dl-ssl.google.com/linux/linux_signing_key.pub \
-    | apt-key add -; then
-    printf \
-        'Error: Unable to install the Google Chrome package validation key.\n' \
-        1>&2
-    exit 2
-fi
-
-printf \
-    'Info: Configuring the Google Chrome APT software source list...\n'
-if ! echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' \
-    >/etc/apt/sources.list.d/google-chrome.list; then
-    printf \
-        'Error: Unable to configure the Google Chrome APT software source list.\n' \
-        1>&2
-    exit 2
-fi
-
 if is_apt_local_cache_stale; then
     printf \
         'Info: Updating the APT software source local cache...\n'
@@ -441,13 +416,82 @@ fi
 
 if ! is_debian_packages_installed google-chrome-stable; then
     printf \
+        'Info: Querying the system processor architecture name...\n'
+    if ! arch="$(uname --machine)"; then
+        printf \
+            'Error: Unable to query the system processor architecture name.\n' \
+            1>&2
+        exit 2
+    fi
+    printf \
+        'Info: The system processor architecture name queried to be "%s".\n' \
+        "${arch}"
+
+    printf \
+        'Info: Determining the Debian architecture name...\n'
+    case "${arch}" in
+        arm)
+            debian_arch=armhf
+        ;;
+        aarch64)
+            debian_arch=arm64
+        ;;
+        i?86)
+            debian_arch=i386
+        ;;
+        ppcle|ppc64le)
+            debian_arch=ppc64el
+        ;;
+        riscv64)
+            debian_arch="${arch}"
+        ;;
+        s390x)
+            debian_arch="${arch}"
+        ;;
+        x86_64)
+            debian_arch=amd64
+        ;;
+        *)
+            printf \
+                'Error: Unsupported system processor architecture name "%s".\n' \
+                "${arch}" \
+                1>&2
+            exit 2
+        ;;
+    esac
+    printf \
+        'Info: Debian architecture name determined to be "%s".\n' \
+        "${debian_arch}"
+
+    google_chrome_download_url="https://dl.google.com/linux/direct/google-chrome-stable_current_${debian_arch}.deb"
+    google_chrome_package_name="${google_chrome_download_url##*/}"
+
+    # We don't use tmpdir in order to reduce subsequent provision time, it'll be cleaned by the system during reboot so no cleanup is needed
+    google_chrome_package_downloaded="${TMPDIR:-/tmp}/${google_chrome_package_name}"
+
+    if ! test -e "${google_chrome_package_downloaded}"; then
+        printf \
+            'Info: Downloading the Google Chrome installation package...\n'
+        wget_opts=(
+            -q
+
+            -O "${google_chrome_package_downloaded}"
+        )
+        if ! wget "${wget_opts[@]}" "${google_chrome_download_url}"; then
+            printf \
+                'Error: Unable to download the Google Chrome installation package.\n' \
+                1>&2
+            exit 2
+        fi
+    fi
+
+    printf \
         'Info: Installing Google Chrome...\n'
     apt_get_install_opts=(
         -y
     )
-    if ! apt-get install \
-        "${apt_get_install_opts[@]}" \
-        google-chrome-stable; then
+    if ! apt-get install "${apt_get_install_opts[@]}" \
+        "${google_chrome_package_downloaded}"; then
         printf \
             'Error: Unable to install Google Chrome.\n' \
             1>&2

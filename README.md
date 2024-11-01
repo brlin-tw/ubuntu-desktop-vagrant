@@ -149,6 +149,10 @@ The following material are referenced during the development of this project:
   Explains how to implement password prompt override in Polkit.
 * [pklocalauthority](https://www.freedesktop.org/software/polkit/docs/0.105/pklocalauthority.8.html)  
   Explains basic information and configuration paths of the Local Authority Polkit authority implementation.
+* [linux - Possible values for `uname -m` - Stack Overflow](https://stackoverflow.com/questions/45125516/possible-values-for-uname-m)  
+  Explains the possible values of the `uanme -m` command's output, and where do they came from.
+* [ArchitectureSpecificsMemo - Debian Wiki](https://wiki.debian.org/ArchitectureSpecificsMemo)  
+  Enumerates the mapping of the `uname -m` output and the debian architecture names.
 
 ## Licensing
 
