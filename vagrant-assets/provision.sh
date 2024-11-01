@@ -818,6 +818,18 @@ if test "${INSTALL_LANGUAGE_SUPPORT}" != null; then
 
     case "${INSTALL_LANGUAGE_SUPPORT}" in
         zh_TW)
+            # WORKAROUND: For some reason the chewing input method may be added twice after provision, try to avoid this outcome by resetting the configuration key first
+            printf \
+                'Info: Resetting the input sources configuration of the GNOME desktop environment..\n'
+            if ! sudo "${sudo_opts[@]}" \
+                DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${vagrant_userid}/bus" \
+                gsettings reset org.gnome.desktop.input-sources sources; then
+                printf \
+                    'Error: Unable to reset the input sources configuration of the GNOME desktop environment.\n' \
+                    1>&2
+                exit 2
+            fi
+
             printf \
                 'Info: Configuring input sources for the "zh_TW" locale...\n'
             if ! sudo "${sudo_opts[@]}" \
