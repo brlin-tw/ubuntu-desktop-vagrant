@@ -49,7 +49,7 @@ Follow the following instructions to use this solution:
     cd /path/to/ubuntu-desktop-vagrant-X.Y.Z
     ```
 
-1. Review and, when necessary, edit [the Vagrantfile](Vagrantfile) to satisfy your requirements.  Refer to [the Environment variables that can change the behavior of the provision program section](#environment-variables-that-can-change-the-behavior-of-the-provision program) for settings that can customize some of the VM provisioning details.
+1. Review and, when necessary, edit [the Vagrantfile](Vagrantfile) to satisfy your requirements.  Refer to [the Environment variables that can change the behavior of the provision program section](#environment-variables-that-can-change-the-behavior-of-the-provision-program) for settings that can customize some of the VM provisioning details.
 1. Run the following command to provision the Ubuntu desktop virtual machine:
 
     ```bash
