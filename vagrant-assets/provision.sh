@@ -45,7 +45,6 @@ language_support_locales_regex='^(zh-han[st]|[[:alpha:]]{2,3}(_[[:alpha:]]{2})?(
 if ! [[ "${INSTALL_LANGUAGE_SUPPORT}" =~ ${language_support_locales_regex} ]]; then
     printf \
         'Error: The value of the "INSTALL_LANGUAGE_SUPPORT" environment variable(%s) is invalid, refer to the documentation for more info.\n' \
-        "${param}" \
         "${INSTALL_LANGUAGE_SUPPORT}" \
         1>&2
     exit 1
