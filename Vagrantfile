@@ -93,6 +93,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell,
     path: "vagrant-assets/provision.sh",
     env: {
+      "ENABLE_KMSCON" => "false",
       "ENABLE_VBOXADD_INSTALLATION" => "true",
       "INSTALL_LANGUAGE_SUPPORT" => "null"
     }

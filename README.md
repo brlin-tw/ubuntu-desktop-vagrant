@@ -76,6 +76,19 @@ Follow the following instructions to use this solution:
 
 The following are the environment variables that can change the behavior of the provision program, which can be set in the `config.vm.provision :shell, path: "vagrant-assets/provision.sh"` call in [the Vagrantfile](Vagrantfile):
 
+### ENABLE_KMSCON
+
+Whether to install KMSCON and configure it to be the default virtual console implementation.
+
+Setting this to `true` allows display of non-ASCII characters in the virtual console.  Note that CJKV text input is still unsupported at the moment.
+
+**Supported values:**
+
+* `true`
+* `false`
+
+**Default value:** `false`
+
 ### ENABLE_VBOXADD_INSTALLATION
 
 Whether to re-install the VirtualBox Guest Additions, which should fix some problems of the guest support drivers from the distribution installation.
@@ -158,6 +171,8 @@ The following material are referenced during the development of this project:
   Explains the possible values of the `uanme -m` command's output, and where do they came from.
 * [ArchitectureSpecificsMemo - Debian Wiki](https://wiki.debian.org/ArchitectureSpecificsMemo)  
   Enumerates the mapping of the `uname -m` output and the debian architecture names.
+* [KMSCON - ArchWiki](https://wiki.archlinux.org/title/KMSCON)  
+  Explains how to configure KMSCON to replace the default virtual console implementation.
 
 ## Licensing
 

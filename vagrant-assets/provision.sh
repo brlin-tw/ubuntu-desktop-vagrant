@@ -6,6 +6,7 @@
 
 ENABLE_VBOXADD_INSTALLATION="${ENABLE_VBOXADD_INSTALLATION:-true}"
 INSTALL_LANGUAGE_SUPPORT="${INSTALL_LANGUAGE_SUPPORT:-null}"
+ENABLE_KMSCON="${ENABLE_KMSCON:-false}"
 
 printf \
     'Info: Configuring the defensive interpreter behaviors...\n'
@@ -28,6 +29,7 @@ fi
 printf \
     'Info: Checking runtime parameters...\n'
 boolean_params=(
+    ENABLE_KMSCON
     ENABLE_VBOXADD_INSTALLATION
 )
 boolean_regex='^(true|false)$'
@@ -61,6 +63,7 @@ required_commands=(
     install
     mktemp
     mount
+    readlink
     reboot
     rm
     sed
@@ -878,6 +881,58 @@ if test "${INSTALL_LANGUAGE_SUPPORT}" != null; then
             'Error: Unable to configure the system locale settings.\n' \
             1>&2
         exit 2
+    fi
+fi
+
+if test "${ENABLE_KMSCON}" == true; then
+    printf \
+        'Info: Installing KMSCON...\n'
+    apt_get_install_opts=(
+        -y
+    )
+    if ! apt-get install "${apt_get_install_opts[@]}" \
+        kmscon; then
+        printf \
+            'Error: Unable to install KMSCON.\n' \
+            1>&2
+        exit 2
+    fi
+
+    printf \
+        'Info: Disabling getty on the tty1 virtual console...\n'
+    if ! systemctl disable getty@tty1.service; then
+        printf \
+            'Error: Unable to disable getty on the tty1 virtual console.\n' \
+            1>&2
+        exit 2
+    fi
+
+    printf \
+        'Info: Enabling KMSCON on the tty1 virtual console...\n'
+    if ! systemctl enable kmsconvt@tty1.service; then
+        printf \
+            'Error: Unable to enable KMSCON on the tty1 virtual console.\n' \
+            1>&2
+        exit 2
+    fi
+
+    local_autovt_unit_file=/etc/systemd/system/autovt@.service
+    if ! test -e "${local_autovt_unit_file}" \
+        || test "$(readlink "${local_autovt_unit_file}")" != /usr/lib/systemd/system/kmsconvt@.service; then
+        printf \
+            'Info: Configuring KMSCON as the default console implementation...\n'
+        ln_opts=(
+            --symbolic
+            --force
+        )
+        if ! ln "${ln_opts[@]}" \
+            /usr/lib/systemd/system/kmsconvt@.service \
+            "${local_autovt_unit_file}"; then
+            printf \
+                'Error: Unable to configure KMSCON as the default console implementation.\n' \
+                1>&2
+            exit 2
+        fi
     fi
 fi
 
